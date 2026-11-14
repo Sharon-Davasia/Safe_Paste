@@ -1,0 +1,9 @@
+Nov 12 03:14:22 prod-web-02 sshd[19231]: Failed password for root from 203.0.113.42 port 55222 ssh2
+Nov 12 03:14:25 prod-web-02 sshd[19231]: Failed password for root from 203.0.113.42 port 55223 ssh2
+Nov 12 03:15:01 prod-web-02 nginx[889]: GET /v1/billing/invoices?api_key=AKIAIOSFODNN7EXAMPLE&user=bob@acmecorp.com 200 41ms
+Nov 12 03:15:07 db-01 postgres[4201]: ERROR: relation "billing_events" does not exist  Where: PL/pgSQL function rollup()
+Nov 12 03:15:09 api-gw app[991]: DB pool exhausted for postgres://billing_svc:S3cr3tPgPass@10.128.0.7:5432/billing_events (client=Acme Corp)
+Nov 12 03:15:11 api-gw app[991]: cache outage at redis://:r3d1sp4ssw0rd@cache-01.internal:6379/0 - retrying via fe80::1
+Nov 12 03:15:13 auth-svc token[1]: refresh failed Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+Nov 12 03:15:20 worker[7]: stripe webhook signature mismatch (key sk_live_TESTONLYFAKEKEY1234). Page ops@acmecorp.com.
+Nov 12 03:15:25 db-01 app[991]: retry from 203.0.113.42 again — same source as before; pinned app v1.2.3.4; helper arr[::2] untouched.
