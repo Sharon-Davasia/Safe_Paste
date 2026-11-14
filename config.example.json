@@ -1,0 +1,21 @@
+{
+  "groups": {
+    "CLIENT": ["Acme Corp", "acme_corp", "Globex Industries"],
+    "DB_TABLE": ["users_prod_v2_table", "billing_events"],
+    "HOST": ["db-prod-01", "cache-01.internal", "jenkins.internal"]
+  },
+  "allowlist": [
+    "8.8.8.8",
+    "1.1.1.1",
+    "https://localhost*",
+    "*@docs.public.io"
+  ],
+  "word_file": null,
+  "disabled_categories": [],
+  "case_sensitive_words": false,
+  "ner": {
+    "enabled": false,
+    "model": "en_core_web_sm",
+    "labels": ["PERSON", "ORG"]
+  }
+}

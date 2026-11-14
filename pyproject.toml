@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safepaste"
+version = "0.1.0"
+description = "Safe-Paste — local-first clipboard sanitizer middleware for pasting into LLMs"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Safe authors" }]
+keywords = ["clipboard", "privacy", "secrets", "redaction", "llm"]
+dependencies = []
+
+[project.optional-dependencies]
+desktop = [
+  "pystray>=0.19",
+  "pynput>=1.7",
+  "plyer>=2.1",
+  "Pillow>=9",
+  "pyperclip>=1.8",
+]
+
+[project.scripts]
+safepaste = "safepaste.cli:main"
+
+[tool.setuptools]
+packages = ["safepaste"]
