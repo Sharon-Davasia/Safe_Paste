@@ -1,0 +1,7 @@
+# Safe-Paste desktop layer (Phase 2): tray icon, global hotkeys, native toasts.
+# The core engine (safepaste/engine.py, detectors.py, secure_map.py) needs NONE of these.
+pystray>=0.19
+pynput>=1.7
+plyer>=2.1
+Pillow>=9
+pyperclip>=1.8
