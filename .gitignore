@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+# user's real dictionary may contain sensitive internal names — keep it out of git
+safepaste.config.json
+words.txt
