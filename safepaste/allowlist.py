@@ -6,7 +6,7 @@ Entries (in `safepaste.config.json` → "allowlist"):
     "10.0.0.0/8"  "fe80::/10"     CIDR — matches any finding whose text value
                                   parses as an IP inside the network
     "*@docs.public.io"            glob (fnmatch, case-insensitive)
-    "https://localhost/*"         glob agains URLs
+    "https://localhost/*"         glob against URLs
     "IP:8.8.8.8"                  category-scoped: only IP findings are
                                   allowed; a same-looking value in another
                                   category (e.g. inside a conn string) is not
@@ -25,6 +25,15 @@ from typing import List, Optional, Tuple
 _SCOPE_RE = re.compile(r"^([A-Z][A-Z0-9_]*)[:=](.+)$")
 
 
+def _is_ip_or_network(entry: str) -> bool:
+    """True if ``entry`` is a bare IP address or CIDR network."""
+    try:
+        ipaddress.ip_network(entry, strict=False)
+        return True
+    except ValueError:
+        return False
+
+
 class AllowList:
     __slots__ = ("globs", "nets", "empty")
 
@@ -37,7 +46,9 @@ class AllowList:
                 continue
             scope: Optional[str] = None
             m = _SCOPE_RE.match(entry)
-            if m:  # "IP:8.8.8.8" — scope must be ALL-CAPS token, so
+            # Upper-case IPv6 such as "FE80::/10" also looks like CATEGORY:value,
+            # so only treat it as scoped when it is not itself an IP/network.
+            if m and not _is_ip_or_network(entry):  # "IP:8.8.8.8" — scope must be ALL-CAPS token, so
                 scope, entry = m.group(1), m.group(2)  # "https://…" stays a glob
             ip = None
             try:
