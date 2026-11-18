@@ -6,10 +6,14 @@ Desktop layer (tray + hotkeys + toasts): optional, see desktop_app.py.
 
 __version__ = "0.1.0"
 
+from .allowlist import AllowList  # noqa: F401
+from .config import Config  # noqa: F401
 from .engine import RestoreResult, SafePasteEngine, SanitizeResult  # noqa: F401
 from .secure_map import Secret, SecureMap  # noqa: F401
 
 __all__ = [
+    "AllowList",
+    "Config",
     "SafePasteEngine",
     "SecureMap",
     "Secret",
