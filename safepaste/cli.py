@@ -9,6 +9,7 @@ Commands
   map       [--reveal]                  inspect the in-RAM mapping
   clear                                 panic: wipe the map (Ctrl+Shift+X)
   words     list|add|rm                 manage the custom dictionary
+  allow     list|add|rm                 manage the never-redact allowlist
   config    path|edit                   where the config lives / open it
 
 One-shot note: ``sanitize`` then ``restore`` in two separate processes cannot
@@ -23,6 +24,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -187,7 +189,13 @@ def cmd_config(session: Session, args) -> None:
                 encoding="utf-8",
             )
         if editor:
-            subprocess.call(f"{editor} {path}", shell=True)
+            # quote the path so spaces/metacharacters cannot break the command
+            quoted = (
+                subprocess.list2cmdline([str(path)])
+                if os.name == "nt"
+                else shlex.quote(str(path))
+            )
+            subprocess.call(f"{editor} {quoted}", shell=True)
         else:
             print(f"no $EDITOR set; edit {path} manually")
     else:
@@ -258,7 +266,7 @@ def cmd_demo(session: Session, args) -> None:
 
 
 def cmd_repl(session: Session, args) -> None:
-    print("Safe-Paste REPL — commands: sanitize [-c], restore [-c], map [--reveal], clear, words, quit")
+    print("Safe-Paste REPL — commands: sanitize [-c], restore [-c], map [--reveal], clear, words, put, quit")
     print("(no args -> clipboard; paste text directly after 'put')")
     while True:
         try:
