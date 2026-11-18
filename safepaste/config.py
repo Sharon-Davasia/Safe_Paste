@@ -15,8 +15,13 @@ Schema::
       },
       "word_file": "words.txt",          // optional: one word per line -> CUSTOM group
       "disabled_categories": ["URL"],    // switch off noisy Tier-1 detectors
-      "case_sensitive_words": false
+      "case_sensitive_words": false,
+      "allowlist": ["8.8.8.8", "10.0.0.0/8", "*@docs.public.io"],  // never redacted
+      "ner": {"enabled": false, "model": "en_core_web_sm", "labels": ["PERSON", "ORG"]}
     }
+
+Allow-list entry syntax is documented in ``allowlist.py``; the optional Tier-3
+NER is described in ``ner.py``.
 
 Group names become placeholder namespaces: CLIENT -> [CLIENT_A], [CLIENT_B]…
 """
@@ -86,7 +91,7 @@ class Config:
             allowlist=[str(a).strip() for a in data.get("allowlist") or [] if str(a).strip()],
             ner_enabled=bool(ner.get("enabled", False)),
             ner_model=str(ner.get("model", "en_core_web_sm")),
-            ner_labels=[str(l).upper() for l in (ner.get("labels") or ["PERSON", "ORG"])],
+            ner_labels=[str(lbl).upper() for lbl in (ner.get("labels") or ["PERSON", "ORG"])],
             word_file=word_file,
             source_path=p if p.exists() else None,
         )
