@@ -18,6 +18,7 @@ demo/REPL modes.
 from __future__ import annotations
 
 import base64 as _b64
+import os
 import shutil
 import subprocess
 import sys
@@ -155,7 +156,7 @@ def detect_backend(prefer: Optional[str] = None):
 
     candidates = []
     if sys.platform.startswith("linux"):
-        wayland = bool(__import__("os").environ.get("WAYLAND_DISPLAY"))
+        wayland = bool(os.environ.get("WAYLAND_DISPLAY"))
         if wayland and _which("wl-copy", "wl-paste"):
             candidates.append(
                 _CliBackend("wl-clipboard", ["wl-paste", "-n"], ["wl-copy"])
