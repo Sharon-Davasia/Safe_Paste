@@ -221,7 +221,7 @@ class SafePasteDaemon:
         menu = Menu(
             MenuItem(self.map_count_text, None, active=False),
             MenuItem("Edit Custom Words…", self.edit_words),
-            MenuItem("Clear Memory (Ctrl+Shift+X)", self.panic),
+            MenuItem("Clear Memory (Ctrl+Shift+X)", handlers["panic"]),
             Menu.SEPARATOR,
             MenuItem(f"Quit v{__version__}", self.quit),
         )
