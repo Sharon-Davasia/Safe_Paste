@@ -25,6 +25,14 @@ from typing import Callable, Dict, List, Optional, Pattern, Tuple
 
 Span = Tuple[int, int, str]  # (start, end, value) — end is exclusive
 
+__all__ = [
+    "Span",
+    "Detector",
+    "PRIORITY",
+    "FRIENDLY_NAMES",
+    "REGEX_DETECTORS",
+]
+
 # --------------------------------------------------------------------------
 # Detector container
 # --------------------------------------------------------------------------
