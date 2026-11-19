@@ -19,6 +19,8 @@ Design notes:
   * claimed spans are masked to spaces (length-preserving) so spaCy offsets
     map 1:1 back onto the original string and entities can never swallow a
     placeholder region;
+  * only the first 200,000 characters are scanned by NER (the regex and
+    dictionary tiers always cover the whole text);
   * entities are re-checked against claimed spans defensively;
   * dedup/placeholder minting goes through the same SecureMap as everything
     else — "Jane Cooper" 6 times ⇒ [PERSON_1] ×6, automatically.
@@ -47,7 +49,7 @@ def make_tier(
         return None
 
     state = {"nlp": None}
-    wanted = {l.upper() for l in labels}
+    wanted = {lbl.upper() for lbl in labels}
 
     def _load():
         if state["nlp"] is None:
