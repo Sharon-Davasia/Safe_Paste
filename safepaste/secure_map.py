@@ -25,7 +25,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 class Secret:
     key: str            # canonical token without brackets, e.g. "IP_1", "CLIENT_A"
     category: str
-    value: str          # the original, unsanitized string
+    value: str = field(repr=False)  # the original, unsanitized string (never shown in repr)
     occurrences: int = 0
     created_at: float = field(default_factory=time.time)
 
