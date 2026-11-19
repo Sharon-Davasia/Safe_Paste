@@ -5,6 +5,8 @@ Pipeline (sanitize):
     text ──► Tier 1: regex detectors        (IPs, keys, tokens, URLs, …)
          ──► Tier 2: custom word dictionary (company terms, grouped)
          ──► overlap resolution             (longest-first, priority tie-break)
+         ──► Tier 3: optional NER           (PERSON/ORG in unclaimed regions)
+         ──► allowlist filter               (public values never reach the map)
          ──► SecureMap.get_or_create        (deterministic, O(1) dedup)
          ──► right-to-left replacement      (spans never shift out of sync)
 
@@ -20,9 +22,10 @@ the caller's job (cli.py, desktop daemon), which keeps it fully unit-testable.
 from __future__ import annotations
 
 import re
+import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from .allowlist import AllowList
 from .config import Config
@@ -125,7 +128,9 @@ class SafePasteEngine:
         disabled_categories: Optional[List[str]] = None,
         case_sensitive_words: bool = False,
         allowlist: Optional[AllowList] = None,
-        ner_tier: Optional[callable] = None,
+        ner_tier: Optional[
+            Callable[[str, Sequence[Finding]], List[Tuple[int, int, str, str]]]
+        ] = None,
     ) -> None:
         # NOTE: never `secure_map or SecureMap()` — a fresh SecureMap has
         # __len__ == 0 and is therefore falsy, silently discarding a caller's
@@ -149,8 +154,6 @@ class SafePasteEngine:
 
             ner_tier = make_tier(config.ner_model, config.ner_labels)
             if ner_tier is None:
-                import sys
-
                 print(
                     "⚠ ner.enabled but spacy not installed — Tier-3 off "
                     "(pip install spacy && python -m spacy download en_core_web_sm)",
@@ -170,7 +173,7 @@ class SafePasteEngine:
     def _compile_word_rules(
         self, groups: Dict[str, List[str]]
     ) -> Dict[str, Tuple[re.Pattern, Dict[str, str]]]:
-        """One alternation regex per group; longest words first at a position.
+        r"""One alternation regex per group; longest words first at a position.
 
         ``(?<!\w)word(?!\w)`` keeps ``users_prod_v2_table`` from matching
         inside longer identifiers, while still matching the bare word.
@@ -263,8 +266,6 @@ class SafePasteEngine:
                 ]
             except Exception as exc:  # NER must never break the sanitize hotkey
                 extra = []
-                import sys
-
                 print(f"⚠ Tier-3 NER skipped: {exc}", file=sys.stderr)
             if extra:
                 findings = self._resolve_overlaps(findings + extra)
